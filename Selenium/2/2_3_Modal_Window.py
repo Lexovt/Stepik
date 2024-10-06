@@ -16,7 +16,7 @@ try:
 
     button = browser.find_element(By.CSS_SELECTOR, "button.btn")
     button.click()
-
+    time.sleep(2)
     confirm = browser.switch_to.alert
     confirm.accept()
 

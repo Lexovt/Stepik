@@ -16,7 +16,7 @@ try:
 
     button = browser.find_element(By.CSS_SELECTOR, "button.btn")
     button.click()
-
+    time.sleep(3)
     new_window = browser.window_handles[1]
     browser.switch_to.window(new_window)
 
