@@ -1,0 +1,28 @@
+Мы уже научились искать один элемент, но иногда, нам понадобится найти множество элементов, и сделать это можно с помощью метода find_elements().
+
+Данный метод имеет те же аргументы, что и find_element(), но главное различие в том, что find_elements() возвращает список элементов.
+
+Пример:
+
+LIST_OF_H1_TAGS = driver.find_elements(By.TAG_NAME, "h2")
+
+print(LIST_OF_H1_TAGS)
+В результате мы получим стандартный список, в котором будут лежать все веб-элементы имеющий тег h2:
+
+[<selenium.webdriver.remote.webelement.WebElement (session="aa2baed948cbe55eedad6d34832f571a", element="b4573195-37c8-4300-a474-a7b0e459bb50")>,
+<selenium.webdriver.remote.webelement.WebElement (session="aa2baed948cbe55eedad6d34832f571a", element="6f7520e1-9dda-4b7f-8c66-73f464a107f3")>,
+<selenium.webdriver.remote.webelement.WebElement (session="aa2baed948cbe55eedad6d34832f571a", element="2d40c5e9-4a00-4a7d-a367-b99af8aea06b")>,]
+
+
+Как можно работать с таким списком?
+Да как и с обычными списками в Python, например мы хотим спарсить все h2 заголовки со страницы:
+
+elements = driver.find_elements(By.TAG_NAME, "h2") # Находим все элементы h2
+for element in elements: # Перебираем список элементов h2
+    print(element.text) # Выводим текст элементов h2
+Тут можно заметить, что я получаю атрибут text, он существует у всех элементов в которых содержится какой-либо текст, что логично)
+
+Или к примеру, если мы хотим получить определенный веб-элемент из списка, то просто обращаемся к нему по индексу:
+
+ELEMENTS = driver.find_elements(By.TAG_NAME, "h2") # Находим все элементы h2
+print(ELEMENTS[2])
