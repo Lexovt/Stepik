@@ -18,5 +18,5 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 driver.get("https://the-internet.herokuapp.com/download")
 time.sleep(2)
 
-driver.find_elements("xpath", "//a")[3].click()
+driver.find_elements("xpath", "//a")[1].click()
 time.sleep(3)
