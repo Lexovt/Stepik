@@ -1,5 +1,5 @@
 import time
-import os
+import os # Для указания путей к файлу и prefs
 
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
@@ -14,10 +14,13 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 ############################################################
 # driver.get("https://the-internet.herokuapp.com/upload")
 # time.sleep(2)
-# upload_field = driver.find_element("xpath", "//input[@type='file']")
+# upload_field = driver.find_element("xpath", "//input[@type='file']")   #####Загрузка на другом сайте
 # upload_field.send_keys(f"{os.getcwd()}/downloads/2.pdf")
 # time.sleep(3)
 ############################################################
+
+
+
 driver.get("https://www.freeconferencecall.com/ru/ru/login")
 time.sleep(3)
 
@@ -26,7 +29,7 @@ Login_field.send_keys("selenium@ya.ru")
 password_field = driver.find_element("xpath", "//input[@type='password']")
 password_field.send_keys("123")
 
-# agree_checkbox = driver.find_element("xpath", "//a[@id='gdpr_checkbox']")
+# agree_checkbox = driver.find_element("xpath", "//a[@id='gdpr_checkbox']") #у меня данного чекбокса нет
 # agree_checkbox.click()
 
 submit_button = driver.find_element("xpath", "//button[@id='loginformsubmit']")
