@@ -1,0 +1,111 @@
+Для того, чтобы сделать скриншот, достаточно просто вызвать метод:
+
+driver.save_screenshot("screen.png")
+В качестве аргумета передаем полный путь для сохранения включая имя будущего скриншота! В данном примере,
+он просто будет сохранен в корне проекта.
+
+Когда мы запускаем наш код, то практически любой сайт может определить используем мы средство автоматизации
+(webdriver в данном случае) или мы реальный пользователь.
+Давайте откроем с помощью Selenium сайт, который отображает некоторые данные, в том числе включен ли режим WebDriver.
+
+Сайт: https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html
+driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
+В результате мы увидем следующее:
+Мы видим, что нас определили как WebDriver, а не человека (т.е используется средство автоматизации) и в целом данный сайт
+спокойно может запретить нам вообще что-либо трогать, выкинуть капчу или вообще заблокировать.
+Некоторые сайты блокируют таких как мы, и не позволяют использовать WebDriver для управления, но есть возможности обойти
+это, и стать в глазах сайта реальным пользователем. А именно:
+
+Использовать User-agent - но это мы рассмотрим попозже.
+Отключить режим автоматизации (WebDriver) - как раз то, что нам сейчас нужно.
+
+На самом деле все максимально просто и не нужно это заучивать, и даже запоминать не обязательно, ибо это разовая настройка.
+Вспомним Options, да да, их мы и будем использовать, всего-то и нужно добавить одну опцию:
+
+options.add_argument("--disable-blink-features=AutomationControlled")
+Посмотрим на итоговый код:
+
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+
+options = Options()
+options.add_argument("--disable-blink-features=AutomationControlled")
+
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=options)
+
+driver.get("https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html")
+
+time.sleep(5)
+Теперь мы чисты! Ну почти)
+
+User agent – это программный элемент браузера (строка), обозначающий юзера, по сути некий идентификатор,
+который позволяет браузеру идентифицировать нас, как пользователя.
+
+В User-agent передаются следующие данные:
+Название и версия браузера.
+Язык.
+Версия операционной системы.
+Программное обеспечение, установленное на используемом устройстве.
+Тип устройства, с которого пользователь зашел на сайт.
+
+Для чего он нужен:
+Для обхода капчи и базовой аутентификации. Можно попросить разработчиков убирать капчу или базовую аутентификацию для пользователей
+с определенным юзер-агентом.
+Для того, чтобы сайты воспринимали исполнение кода веб-драйвером в качестве реального пользователя (да, отключение WebDriver мода помогает,
+но по user-agent все еще можно определить что вы работаете с помощью скрипта).
+Для тестирования поведения веб-приложения при разных параметрах, например поведение при разных языках.
+Вы можете посмотреть свой текущий User-agent на том же сайте: https://intoli.com/blog/not-possible-to-block-chrome-headless/chrome-headless-test.html
+
+Объявляется user-agent все так же через options, хорошим тоном будет использование его вместе с отключением WebDriver мода.
+
+options.add_argument("--user-agent=Ваш кастомный или заранее выбранный юзер-агент")
+Да, вы можете без проблемы прописать любой User-agent, чтобы он был уникальным, тем самым сможете как раз обходить капчу на своем проекте.
+Но что если нужен какой-то конкретный User-agent? Вот готовый список, который постоянно обновляется:
+
+https://useragents.ru/stable.html - ПК агенты
+https://deviceatlas.com/blog/mobile-browser-user-agent-strings - мобильные агенты
+
+Пример влияния User-agent на поведение и как его можно использовать в тестировании:
+Если мы зайдем на сайт https://vk.com используя User-agent браузера Chrome
+
+import time
+
+import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+
+options = Options()
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36")
+driver = webdriver.Chrome(options=options)
+
+driver.get("https://vk.com")
+То не увидим ничего необычного:
+Но вот если изменим user-agent на мобильный, например на Samsung
+
+import time
+
+import pytest
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+
+options = Options()
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("--user-agent=Mozilla/5.0 (Linux; Android 13; SAMSUNG SM-S918B) AppleWebKit/537.36
+(KHTML, like Gecko) SamsungBrowser/21.0 Chrome/110.0.5481.154 Mobile Safari/537.36")
+driver = webdriver.Chrome(options=options)
+
+driver.get("https://vk.com")
+В таком случае, vk.com будет думать, что мы зашли с телефона, соответственно верстка, размеры и логика меняются)
+Для полноценного преобразования нашей автоматизации в роль реального пользователя, необходимо изучить такую тему, как User-agent.
